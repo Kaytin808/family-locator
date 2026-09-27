@@ -23,9 +23,10 @@ jobs:
         run: |
           if [ -n "$FIREBASE_PLIST" ]; then
             echo "$FIREBASE_PLIST" | base64 --decode > ios/FamilyLocator/GoogleService-Info.plist
+            sed -i '' 's/firebaseConfigured = false/firebaseConfigured = true/' src/config/build.ts
           else
             cp ios/FamilyLocator/GoogleService-Info.plist.example ios/FamilyLocator/GoogleService-Info.plist
-            echo "::warning::Using placeholder Firebase configuration. The IPA will build, but Firebase features need the repository secret."
+            echo "::warning::Using placeholder Firebase configuration. The app will open to setup instructions; Firebase features need the repository secret."
           fi
       - name: Install CocoaPods
         run: cd ios && bundle install && bundle exec pod install

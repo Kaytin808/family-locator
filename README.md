@@ -83,7 +83,7 @@ On both phones, choose **Always Allow** when iOS offers the location upgrade and
 
 ## GitHub Actions IPA
 
-`ios-unsigned-ipa.yml` runs automatically on pushes to `main` and produces an unsigned IPA that Sideloadly can sign locally. It can compile without secrets by using the placeholder Firebase plist, but that artifact will not connect to Firebase until `GOOGLE_SERVICE_INFO_PLIST_BASE64` is configured.
+`ios-unsigned-ipa.yml` runs automatically on pushes to `main` and produces an unsigned IPA that Sideloadly can sign locally. It can compile without secrets by using the placeholder Firebase plist; that artifact opens to a Firebase setup notice instead of initializing Firebase. Add `GOOGLE_SERVICE_INFO_PLIST_BASE64` to produce a functional build.
 
 The optional `ios-ipa.yml` workflow archives and exports a development-signed IPA when manually dispatched. Add these repository secrets:
 

@@ -15,7 +15,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    FirebaseApp.configure()
+    // Firebase aborts during launch when the checked-in placeholder plist is
+    // packaged into a preview build. Only configure it after CI (or a local
+    // developer) supplies a real GoogleService-Info.plist.
+    if let plistPath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+       let plist = NSDictionary(contentsOfFile: plistPath),
+       let appID = plist["GOOGLE_APP_ID"] as? String,
+       appID.hasPrefix("1:"),
+       !appID.contains("REPLACE_ME") {
+      FirebaseApp.configure()
+    }
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()

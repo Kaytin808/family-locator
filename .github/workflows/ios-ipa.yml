@@ -21,7 +21,10 @@ jobs:
       - name: Write Firebase configuration
         env:
           FIREBASE_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
-        run: echo "$FIREBASE_PLIST" | base64 --decode > ios/FamilyLocator/GoogleService-Info.plist
+        run: |
+          test -n "$FIREBASE_PLIST"
+          echo "$FIREBASE_PLIST" | base64 --decode > ios/FamilyLocator/GoogleService-Info.plist
+          sed -i '' 's/firebaseConfigured = false/firebaseConfigured = true/' src/config/build.ts
       - name: Install CocoaPods
         run: cd ios && bundle install && bundle exec pod install
       - name: Install signing certificate and profile

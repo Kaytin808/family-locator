@@ -1,33 +1,68 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {NavigationContainer} from '@react-navigation/native';
-import {AppProvider, useApp} from './src/context/AppContext';
-import {AppNavigator} from './src/navigation/AppNavigator';
-import {LoadingView} from './src/components/LoadingView';
-import {linking} from './src/navigation/linking';
+import {firebaseConfigured} from './src/config/build';
 
-function Root() {
-  const {initializing} = useApp();
-
-  if (initializing) {
-    return <LoadingView label="Finding your circle…" />;
-  }
-
+function FirebaseSetupRequired() {
   return (
-    <NavigationContainer linking={linking}>
+    <SafeAreaProvider>
       <StatusBar barStyle="dark-content" />
-      <AppNavigator />
-    </NavigationContainer>
+      <View style={styles.container}>
+        <Text style={styles.eyebrow}>FAMILY LOCATOR</Text>
+        <Text style={styles.title}>Firebase setup required</Text>
+        <Text style={styles.body}>
+          This preview opened safely, but it cannot sign in or share locations
+          until a real GoogleService-Info.plist is added to the GitHub build.
+        </Text>
+        <Text style={styles.detail}>
+          Add the GOOGLE_SERVICE_INFO_PLIST_BASE64 repository secret, then run
+          the iOS workflow again.
+        </Text>
+      </View>
+    </SafeAreaProvider>
   );
 }
 
 export default function App() {
-  return (
-    <SafeAreaProvider>
-      <AppProvider>
-        <Root />
-      </AppProvider>
-    </SafeAreaProvider>
-  );
+  if (!firebaseConfigured) {
+    return <FirebaseSetupRequired />;
+  }
+
+  // Keep Firebase-dependent modules unevaluated in placeholder builds. Their
+  // getApp() calls are only safe after the native default app is configured.
+  const ConfiguredApp = require('./src/ConfiguredApp').default;
+  return <ConfiguredApp />;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+    backgroundColor: '#F4F7FB',
+  },
+  eyebrow: {
+    color: '#3973E6',
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 1.8,
+    marginBottom: 12,
+  },
+  title: {
+    color: '#152238',
+    fontSize: 32,
+    fontWeight: '800',
+    marginBottom: 16,
+  },
+  body: {
+    color: '#41516A',
+    fontSize: 17,
+    lineHeight: 25,
+    marginBottom: 14,
+  },
+  detail: {
+    color: '#68778E',
+    fontSize: 14,
+    lineHeight: 21,
+  },
+});
