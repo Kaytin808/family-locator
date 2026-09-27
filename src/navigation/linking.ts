@@ -1,5 +1,5 @@
 export const linking = {
-  prefixes: ['familylocator://', 'https://YOUR_FIREBASE_PROJECT.web.app'],
+  prefixes: ['familylocator://', 'https://family-locator-36c4b.web.app'],
   config: {
     screens: {
       Invite: {path: 'invite/:inviteId'},

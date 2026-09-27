@@ -51,7 +51,7 @@ LiveContainer can reduce how often inner apps are re-signed, depending on how Li
    firebase use --add
    ```
 
-5. Replace `YOUR_FIREBASE_PROJECT` in `src/navigation/linking.ts` with the Firebase project ID.
+5. The configured Firebase project is `family-locator-36c4b`; update `src/navigation/linking.ts` if you switch projects.
 6. Enable billing if deploying Cloud Functions, then deploy the backend:
 
    ```sh
@@ -62,7 +62,7 @@ LiveContainer can reduce how often inner apps are re-signed, depending on how Li
 
 7. For a paid Apple Developer Program account, create an APNs authentication key and upload it under **Firebase project settings → Cloud Messaging → Apple app configuration**. Set `ENABLE_PUSH_NOTIFICATIONS=true` in GitHub Actions. Firebase’s current [Apple FCM setup guide](https://firebase.google.com/docs/cloud-messaging/ios/get-started) covers the console steps.
 
-The invite page will be `https://YOUR_FIREBASE_PROJECT.web.app/invite/<code>` and redirects to `familylocator://invite/<code>`.
+The invite page will be `https://family-locator-36c4b.web.app/invite/<code>` and redirects to `familylocator://invite/<code>`.
 
 ## Local iOS build
 
