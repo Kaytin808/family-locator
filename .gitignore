@@ -73,3 +73,11 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Private app configuration and signing material
+/ios/FamilyLocator/GoogleService-Info.plist
+*.p12
+*.mobileprovision
+/functions/lib/
+/functions/node_modules/
+.firebase/

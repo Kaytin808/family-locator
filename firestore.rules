@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function circle(circleId) { return get(/databases/$(database)/documents/circles/$(circleId)).data; }
+    function member(circleId) { return signedIn() && request.auth.uid in circle(circleId).memberUids; }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid ||
+        (resource.data.activeCircleId != null && member(resource.data.activeCircleId)));
+      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+    match /circles/{circleId} {
+      allow read: if member(circleId);
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid && request.resource.data.memberUids == [request.auth.uid];
+      allow update: if member(circleId) && request.resource.data.memberUids == resource.data.memberUids;
+      allow delete: if false;
+
+      match /locations/{uid} {
+        allow read: if member(circleId);
+        allow create, update: if member(circleId) && request.auth.uid == uid;
+        allow delete: if false;
+        match /history/{entryId} {
+          allow read: if member(circleId);
+          allow create: if member(circleId) && request.auth.uid == uid && request.resource.data.uid == uid;
+          allow update, delete: if false;
+        }
+      }
+      match /places/{placeId} { allow read, write: if member(circleId); }
+      match /alerts/{alertId} {
+        allow read: if member(circleId);
+        allow create: if member(circleId) && request.resource.data.senderUid == request.auth.uid;
+        allow update: if member(circleId);
+        allow delete: if false;
+      }
+      match /{serverCollection}/{docId} {
+        allow read: if member(circleId) && serverCollection in ['geofenceStates', 'batteryStates'];
+        allow write: if false;
+      }
+    }
+    match /invites/{inviteId} { allow read, write: if false; }
+  }
+}
